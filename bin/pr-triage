@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Wrapper so pr-triage runs from anywhere. Resolves symlinks so it works when
+# linked into ~/.local/bin or similar.
+set -euo pipefail
+src="${BASH_SOURCE[0]}"
+while [ -L "$src" ]; do
+  dir="$(cd -P "$(dirname "$src")" && pwd)"
+  src="$(readlink "$src")"
+  [[ "$src" != /* ]] && src="$dir/$src"
+done
+root="$(cd -P "$(dirname "$src")/.." && pwd)"
+PYTHONPATH="$root${PYTHONPATH:+:$PYTHONPATH}" exec python3 -m pr_triage "$@"

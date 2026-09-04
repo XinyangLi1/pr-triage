@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+.venv/
+# Never commit a real configuration — it contains org handles and board ids.
+pr-triage.toml
+config.toml

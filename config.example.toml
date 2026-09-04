@@ -1,0 +1,47 @@
+# pr-triage configuration — example.
+#
+# Copy to ~/.config/pr-triage/config.toml and edit. Nothing here is read from
+# the repository at runtime, so your real values never need to be committed.
+
+[github]
+# Your GitHub login.
+user = "your-gh-username"
+
+# The narrow team whose review requests you actually care about. This is the
+# whole point of the tool: a broad owner team fans out to every member, while
+# this one is the real signal. Omit to fall back to every review request.
+review_team = "your-org/team-your-squad"
+
+# Optional allow-list. Leave empty to search every repo you can see.
+repos = []
+
+# Safety cap on rows fetched per bucket.
+max_results = 300
+
+
+[jira]
+enabled = true
+
+# Regex matching issue keys in PR titles and branch names. Matching is
+# case-insensitive, so a branch like `feature/proj-123-thing` is still found.
+key_pattern = "PROJ-\\d+"
+
+# One entry per sub-team you want to tell apart. `board` is the Jira board id
+# (the `rapidView` number in a board URL).
+#
+# `sprint_prefix` matters: a board frequently lists sprints belonging to other
+# teams as well, so classification keys off the sprint *name*, not board
+# membership. Set it to the prefix your team's sprints actually use.
+#
+# Order defines the numeric shorthand: the first entry is `-t 1`, the second
+# `-t 2`, and so on. Names always work too, e.g. `-t billing`.
+
+[[jira.teams]]
+name = "billing"
+board = 1234
+sprint_prefix = "team-billing:"
+
+[[jira.teams]]
+name = "identity"
+board = 5678
+sprint_prefix = "team-identity:"
