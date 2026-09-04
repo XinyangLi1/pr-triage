@@ -11,10 +11,15 @@ most of the surprising decisions are load-bearing and were made from measurement
 ## Invariants — do not break these without discussing it
 
 1. **The issue tracker annotates; it never filters.** `-t` and `-s` mark rows with
-   `*` and re-order them. They must never remove a row. Most PRs carry no issue
-   key, so filtering on the tracker silently hides real review requests. This was
-   measured: hard filtering returned 1 draft PR out of a queue of 11 and hid the
-   oldest blocked item.
+   `*` and float them within their tier. They must never remove a row. Most PRs
+   carry no issue key, so filtering on the tracker silently hides real review
+   requests. This was measured: hard filtering returned 1 draft PR out of a queue
+   of 11 and hid the oldest blocked item.
+
+7. **Display order is a fixed 4-tier split: `DIRECT` → `TEAM`-classified →
+   `MINE` → `TEAM`-unclassified.** This is unconditional — it does not depend on
+   `-t`/`-s` being passed. See `DESIGN.md` §5a for why the classified/unclassified
+   split exists at all and why it isn't gated on `-t`.
 
 2. **Age is time since review was requested, never since the PR was opened.**
    `gh.blocked_since()` reads the `ReviewRequestedEvent` timeline. Substituting

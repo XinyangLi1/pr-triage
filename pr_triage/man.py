@@ -65,15 +65,20 @@ WHY THIS EXISTS
     same data from the API and sorts it locally.
 
 BUCKETS
-    REQUESTED FROM YOU DIRECTLY
-        Someone named you personally (user-review-requested). Rare, and almost
-        always the thing to do first.
-    REQUESTED FROM @<team>
-        Routed to a team you belong to. Anyone on the team can take it.
-        With -t -1 this widens to every review request that reaches you,
-        including owner-team fan-out.
-    YOUR OPEN PRS
-        PRs you authored, with their current review decision.
+    Rows are shown in a fixed 4-tier order, always, independent of -t:
+      1. REQUESTED FROM YOU DIRECTLY  — named personally, rare, act first
+      2. REQUESTED FROM @<team> — ON A TEAM BOARD
+                                 — anyone on the team can take it, and the
+                                   tracker already placed it on a board
+      3. YOUR OPEN PRS           — PRs you authored, with review decision
+      4. REQUESTED FROM @<team> — UNCLASSIFIED
+                                 — reached the team, but no issue key, or the
+                                   key isn't in any searched sprint
+    -t only marks matching rows within tier 2 with * and floats them to the
+    top of it; it never reorders the four tiers themselves. With -t -1 the
+    team heading widens to REVIEW REQUESTS REACHING YOU. When tiers 2 and 4
+    aren't both present (e.g. --no-jira, where nothing is ever classified),
+    they collapse into one plain team section in the same slot.
 
 THE AGE COLUMN
     Age is time since review was requested from you or your team, taken from
@@ -95,9 +100,10 @@ WHY -t MARKS BUT NEVER FILTERS
     monorepo, only 1 of 11 review items could be classified; hard filtering by
     team therefore hid the single oldest blocked PR and returned a lone draft.
 
-    So -t and -s mark matching rows with * and float them to the top, and every
-    other row still appears beneath. The footer always states how many rows
-    could not be classified, so the gap is visible rather than silent.
+    So -t and -s mark matching rows with * and float them within the classified
+    tier, and every other row still appears in its own tier below — see BUCKETS.
+    The footer always states how many rows could not be classified, so the gap
+    is visible rather than silent.
 
     -w, -l, -r and --repo are ordinary filters and do remove rows. Whenever
     rows are removed, the footer says how many.

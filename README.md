@@ -140,8 +140,17 @@ pr-triage --json | jq '.rows[] | select(.age_days > 14)'
 
 ## Reading the output
 
-Three sections, most-actionable first: **direct requests** (someone named you),
-**team requests** (anyone on the team can take it), **your own PRs**.
+A fixed 4-tier order, independent of `-t`:
+
+1. **direct requests** — someone named you personally
+2. **team requests already on a team board** — the tracker placed them, `-t`
+   only marks/floats matches within this tier
+3. **your own PRs**
+4. **team requests the tracker couldn't classify** — no issue key, or the key
+   isn't in a searched sprint; shown last, never dropped
+
+When tiers 2 and 4 aren't both present (e.g. `--no-jira`, where nothing is ever
+classified), they collapse into one plain team section in the same slot.
 
 The team column reads `-` when a PR has an issue key that is not in any searched
 sprint, and `?` when it has no issue key at all. Rows at or beyond 7 days are

@@ -92,7 +92,7 @@ the timeline, and is capped at 30 requests/minute besides.
 
 ## 5. Buckets, not one flat list
 
-Three sections, ranked by how much they oblige the user:
+Three query buckets, ranked by how much they oblige the user:
 
 | Bucket | Query | Meaning |
 |---|---|---|
@@ -106,6 +106,31 @@ demoted to a team request.
 `-t -1` swaps the `TEAM` query for the unfiltered `review-requested:`, deliberately
 exposing the full firehose for the rare case where that is what you want. It
 paginates, because that result set exceeds one page.
+
+### 5a. Display order is a fixed 4-tier split, not 3 buckets
+
+Once `TEAM` rows exist, a second cut matters as much as the bucket itself:
+whether the tracker could actually place the PR on a team's board (`team`
+is non-null) or not. Early testing put every `TEAM` row in one section, with
+`-t` marking matches — and the marked rows still had to be found by eye among
+a majority of unclassifiable ones. The fix was to split `TEAM` into two
+sections by classification and interleave them with `MINE`, always, not just
+when `-t` is passed:
+
+1. `DIRECT`
+2. `TEAM` where `team` is set — "on a team board"
+3. `MINE`
+4. `TEAM` where `team` is null — "unclassified"
+
+This order is unconditional: it does not depend on whether `-t`/`-s` were
+passed. `-t` still marks and floats matches, but only *within* tier 2 — it
+never changes which of the four tiers comes first. The rationale mirrors §3:
+classification should organize the view by default, not only on request, and
+the rows the tracker couldn't place should never be mixed in with the ones it
+could — that's what made the `*` marker necessary to scan for in the first
+place. When one of tiers 2/4 is empty (all `--no-jira` runs land here, since
+`team` is always null), it collapses back to a single plain team section in
+the same slot, which is the pre-split behaviour.
 
 ## 6. Sprint depth is a cost dial, not a filter
 

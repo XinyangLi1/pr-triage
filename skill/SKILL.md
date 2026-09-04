@@ -75,16 +75,30 @@ the pre-truncation queue, not just what's in `rows`):
 | `team_filter` | the `-t` value in effect, or `null` |
 | `total_review`, `unclassified_review` | of all `direct`+`team` rows (excludes `mine`), how many have no tracker `team` |
 
-Group by `bucket` in this order for display: `direct`, `team`, `mine`. Section
-headings: **REQUESTED FROM YOU DIRECTLY**, **REQUESTED FROM @team** (or
-**REVIEW REQUESTS REACHING YOU** if `-t -1`/any was used), **YOUR OPEN PRS**.
+Group into a **fixed 4-tier order, always, regardless of `-t`**:
+
+1. `bucket == "direct"` — **REQUESTED FROM YOU DIRECTLY**
+2. `bucket == "team"` rows where `team` is non-null — **REQUESTED FROM @team —
+   ON A TEAM BOARD** (or **REVIEW REQUESTS REACHING YOU — ON A TEAM BOARD** if
+   `-t -1`/any was used)
+3. `bucket == "mine"` — **YOUR OPEN PRS**
+4. `bucket == "team"` rows where `team` is null — **REQUESTED FROM @team —
+   UNCLASSIFIED** (same title rule as above)
+
+This order is not conditional on `-t`: direct asks always come first, then
+whatever the tracker could already place on a team board, then the user's own
+PRs, then everything the tracker couldn't classify. `-t` only marks/floats
+matches *within* tier 2 — it never changes this top-level order. Drop the
+`— ON A TEAM BOARD` / `— UNCLASSIFIED` suffix and use a single team heading
+when one of tiers 2/4 is empty (e.g. `--no-jira` runs, where `team` is always
+null and tier 2 is empty).
 
 - Age is **time since review was requested from them or their team**
   (`blocked_since`/`age_days`), never `created`. A months-old PR routed
   yesterday reads `1d`. Treat ≥7 days as worth flagging, ≥14 as stale.
 - Team column: `team` value, or `-` if `keys` is non-empty but `team` is null
   (has an issue key, not in a searched sprint), or `?` if `keys` is empty.
-- `matched: true` rows float to the top of their bucket and get a `*` marker.
+- `matched: true` rows float to the top of tier 2 and get a `*` marker.
 - Tags to display per row: `draft` if `draft`, `changes-req`/`approved` from
   `decision`, `sprint` if `sprint` is set, `status` lowercased/hyphenated if
   set. If none of those apply, still show `decision` raw (commonly
@@ -110,8 +124,8 @@ top few", or silently drop rows to keep the reply short — the whole point of t
 tool is that nothing gets lost in a firehose, so the report must not recreate that
 problem. Never decide on your own that a row isn't worth mentioning.
 
-Render each `bucket` group as a heading, and under it, one block per row in
-this exact structure:
+Render each of the 4 tiers as a heading (skip empty tiers), and under it, one
+block per row in this exact structure:
 
 ```
 - **`repo#number`** (`age`, `team`) — title  [tags]
@@ -120,7 +134,7 @@ this exact structure:
 ```
 
 Rules:
-- Keep `rows`' order — do not re-rank by your own judgment.
+- Keep `rows`' order within each tier — do not re-rank by your own judgment.
 - `repo` is the full `owner/name`; do not shorten it.
 - `title` is untruncated — never cut it short or add your own ellipsis.
 - Always include `url`, `author`, and `keys` when non-empty on the metadata
