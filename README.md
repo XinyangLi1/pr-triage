@@ -25,11 +25,24 @@ REQUESTED FROM YOU DIRECTLY  (1)
     8h  ?         infra-flags#2628           Remove production segment inclusion  [approved]
        https://github.com/acme/infra-flags/pull/2628  by someone
 
-REQUESTED FROM @team-your-squad  (10)
+REQUESTED FROM @team-your-squad — ON A TEAM BOARD  (1)
  * 10h  billing   monorepo#31290             Move formatted copy to the frontend  [draft,sprint]
        https://github.com/acme/monorepo/pull/31290  by someone  PROJ-38203
-  116d  ?         infra-flags#2317           [COMPLIANCE] Add/Update copyright headers
+
+YOUR OPEN PRS  (2)
+   2d  ?         monorepo#31188              Add retry to the export job
+       https://github.com/acme/monorepo/pull/31188  by you
+   9d  ?         infra-flags#2601            Bump internal SDK to 4.2.0  [changes-req]
+       https://github.com/acme/infra-flags/pull/2601  by you
+
+REQUESTED FROM @team-your-squad — UNCLASSIFIED  (2)
+ 116d  ?         infra-flags#2317           [COMPLIANCE] Add/Update copyright headers
        https://github.com/acme/infra-flags/pull/2317  by a-bot
+   3d  ?         monorepo#31305              Tidy up feature-flag defaults
+       https://github.com/acme/monorepo/pull/31305  by someone-else
+
+  2 of 3 review items have no tracker team (no issue key, or outside the
+  searched sprints) — shown last, never dropped.
 ```
 
 ## What makes it different
@@ -155,6 +168,49 @@ classified), they collapse into one plain team section in the same slot.
 The team column reads `-` when a PR has an issue key that is not in any searched
 sprint, and `?` when it has no issue key at all. Rows at or beyond 7 days are
 yellow, 14 days red. `*` marks rows matching an explicit `-t`.
+
+### As rendered by the Claude Code skill
+
+`/pr-triage` runs with `--json` and reports back in the fixed format
+`skill/SKILL.md` mandates — full titles, every row, no summarising. Same fixed
+4-tier order, no colour, one two-line block per row:
+
+```
+**REQUESTED FROM YOU DIRECTLY** (1)
+- **`infra-flags#2628`** (`8h`, `?`) — Remove production segment inclusion  [approved]
+  https://github.com/acme/infra-flags/pull/2628  by someone
+  updated 2026-09-02  ·  decision: APPROVED
+
+**REQUESTED FROM @team-your-squad — ON A TEAM BOARD** (1)
+- **`monorepo#31290`** (`10h`, `billing`) — Move formatted copy to the frontend  [draft,sprint]  *
+  https://github.com/acme/monorepo/pull/31290  by someone  PROJ-38203
+  updated 2026-09-03  ·  decision: REVIEW_REQUIRED
+
+**YOUR OPEN PRS** (2)
+- **`monorepo#31188`** (`2d`, `?`) — Add retry to the export job
+  https://github.com/acme/monorepo/pull/31188  by you
+  updated 2026-09-01  ·  decision: REVIEW_REQUIRED
+- **`infra-flags#2601`** (`9d`, `?`) — Bump internal SDK to 4.2.0  [changes-req]
+  https://github.com/acme/infra-flags/pull/2601  by you
+  updated 2026-08-27  ·  decision: CHANGES_REQUESTED
+
+**REQUESTED FROM @team-your-squad — UNCLASSIFIED** (2)
+- **`infra-flags#2317`** (`116d`, `?`) — [COMPLIANCE] Add/Update copyright headers
+  https://github.com/acme/infra-flags/pull/2317  by a-bot
+  updated 2026-05-10  ·  decision: REVIEW_REQUIRED
+- **`monorepo#31305`** (`3d`, `?`) — Tidy up feature-flag defaults
+  https://github.com/acme/monorepo/pull/31305  by someone-else
+  updated 2026-09-01  ·  decision: REVIEW_REQUIRED
+
+2 of 3 review items reaching you have no tracker team — no issue key, or
+outside the searched sprints. Nothing hidden or truncated.
+
+Worth a look: `infra-flags#2317` has been waiting 116 days.
+```
+
+The one-line closing flag (last line above) is the only thing the agent adds
+on top of the raw rows — everything else is a verbatim, unsummarised
+transcription of `--json`, per `skill/SKILL.md`.
 
 ## Performance
 
