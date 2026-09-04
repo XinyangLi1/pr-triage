@@ -145,7 +145,16 @@ def main(argv: list[str] | None = None) -> int:
         print(f"pr-triage: {warning}", file=sys.stderr)
 
     if args.json:
-        print(json.dumps([p.to_dict() for p in sel.shown], indent=2))
+        print(json.dumps({
+            "rows": [p.to_dict() for p in sel.shown],
+            "summary": {
+                "hidden": sel.hidden,
+                "filtered_out": sel.filtered_out,
+                "team_filter": sel.team_filter,
+                "total_review": sel.total_review,
+                "unclassified_review": sel.unclassified_review,
+            },
+        }, indent=2))
         return 0
 
     render.render(

@@ -135,7 +135,7 @@ pr-triage -a                   # the whole queue
 pr-triage -t billing -a        # float billing rows, keep everything else visible
 pr-triage -t -1 -w 1           # everything that reached you in the last week
 pr-triage -r 10 --no-jira      # 10 most recent requests, GitHub only, fast
-pr-triage --json | jq '.[] | select(.age_days > 14)'
+pr-triage --json | jq '.rows[] | select(.age_days > 14)'
 ```
 
 ## Reading the output
